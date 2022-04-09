@@ -27,11 +27,14 @@ jobs:
         
       - name: Download ffmpeg archive
         # run: Invoke-WebRequest -Uri $($env:ffmpeg_archive_url) -OutFile ffmpeg.zip
+        run: $pwd
         run: Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" -OutFile ffmpeg.zip
+        run: Test-Path -Path ffmpeg.zip
 
       - name: Download python archive
         # run: Invoke-WebRequest -Uri $($env:python_archive_url) -OutFile python.zip
         run: Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip" -OutFile python.zip
+        run: Test-Path -Path python.zip
 
       - name: Create build directory and dist directory
         run: New-Item -Path @("build", "dist") -ItemType Directory
