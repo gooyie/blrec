@@ -68,9 +68,10 @@ jobs:
         run: pip install ${{ github.workspace }}
 
       - name: Copy site-packages
-        shell: cmd
+        # shell: cmd
         working-directory: build
-        run: robocopy venv\Lib\site-packages python\Lib\site-packages /mir /xd __pycache__* pip* setuptools*
+        # run: robocopy venv\Lib\site-packages python\Lib\site-packages /mir /xd __pycache__* pip* setuptools*
+        run: robocopy venv\Lib\site-packages python\Lib\site-packages /mir
 
       - name: Add search path
         working-directory: build
