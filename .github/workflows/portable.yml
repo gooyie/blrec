@@ -34,7 +34,7 @@ jobs:
       - name: Create build directory and dist directory
         run: |
          New-Item -Path @("build", "dist") -ItemType Directory
-         Clear-Item -Path @("build", "dist") -ItemType Directory
+         Clear-Item -Path @("build", "dist") -Force
 
       - name: Unzip ffmpeg archive
         run: Expand-Archive -LiteralPath "ffmpeg.zip" -DestinationPath "build"
@@ -71,6 +71,7 @@ jobs:
         shell: cmd
         working-directory: build
         run: (robocopy venv\Lib\site-packages python\Lib\site-packages /mir /xd __pycache__* pip* setuptools*) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
+        # https://ss64.com/nt/robocopy-exit.html
         # https://superuser.com/questions/280425/getting-robocopy-to-return-a-proper-exit-code
         # https://social.msdn.microsoft.com/Forums/en-US/d599833c-dcea-46f5-85e9-b1f028a0fefe/robocopy-exits-with-error-code-1
 
