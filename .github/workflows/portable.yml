@@ -32,10 +32,7 @@ jobs:
         run: Invoke-WebRequest -Uri $($env:PYTHON_ARCHIVE_URL) -OutFile python.zip
 
       - name: Create build directory and dist directory
-        run: |
-          New-Item -Path @("build", "dist") -ItemType Directory
-          ls build 
-          ls dist
+        run: New-Item -Path @("build", "dist") -ItemType Directory
 
       - name: Unzip ffmpeg archive
         run: Expand-Archive -LiteralPath "ffmpeg.zip" -DestinationPath "build"
@@ -55,16 +52,12 @@ jobs:
       - name: Sliming ffmpeg
         working-directory: build
         run: |
-          Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
+          Get-ChildItem -Path "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
           ls ffmpeg
 
       - name: Create venv
         working-directory: build
         run: python -m venv venv
-
-      # - name: Activate venv
-      #   working-directory: build
-      #   run: .\venv\Scripts\activate
 
       - name: Install packages
         working-directory: build
@@ -103,7 +96,7 @@ jobs:
       - name: Zip files
         run: |
           ls build
-          Compress-Archive -Path "build\*" -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
+          Get-ChildItem -Path "build" -Include @("run.bat", "python", "ffmpeg") | Compress-Archive -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
           ls dist
 
       - name: Upload distributions to release
