@@ -5,7 +5,16 @@ on:
     tags:
       - v*.*.*
 
+env:
+  archive_name: blrec-${{ github.ref_name }}-win64.zip
+  ffmpeg_archive: ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
+  ffmpeg_archive_url: "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/$($env:ffmpeg_archive)"
+  python_version: 3.10.4
+  python_archive: "python-$env:python_version-embed-amd64.zip"
+  python_archive_url: "https://www.python.org/ftp/python/$($env:python_version)/$($env:python_archive)"
+
 jobs:
+
   build:
     name: Build Windows portable distributions
     runs-on: windows-latest 
@@ -19,17 +28,8 @@ jobs:
         with:
           python-version: "3.10"
         
-      - name: Define variables 
-        run: |
-          echo "archive_name=blrec-${{ github.ref }}-win64.zip" >> $GITHUB_ENV
-          echo "ffmpeg_archive=ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" >> $GITHUB_ENV
-          echo "ffmpeg_archive_url=https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${{ env.ffmpeg_archive }}" >> $GITHUB_ENV
-          echo "python_version=3.10.4" >> $GITHUB_ENV
-          echo "python_archive=python-${{ env.python_version }}-embed-amd64.zip" >> $GITHUB_ENV
-          echo "python_archive_url=https://www.python.org/ftp/python/${{ env.python_version }}/${{ env.python_archive }}" >> $GITHUB_ENV
-
       - name: Download ffmpeg archive
-        run: Invoke-WebRequest -Uri ${{ env.ffmpeg_archive_url }} -OutFile ${{ env.ffmpeg_archive }}
+        run: Invoke-WebRequest -Uri $env:ffmpeg_archive_url -OutFile $env:ffmpeg_archive
 
       - name: Download python archive
         run: Invoke-WebRequest -Uri ${{ env.python_archive_url }} -OutFile ${{ env.python_archive }}
