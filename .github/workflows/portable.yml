@@ -44,7 +44,7 @@ jobs:
       - name: Enter build directory
         run: |
           Set-Location -Path "build"
-          pwd
+          ls
 
       - name: Rename ffmpeg directory
         # run: Rename-Item -Path $($env:ffmpeg_archive).Substring(0, $($env:ffmpeg_archive).Length - 4) "ffmpeg"
