@@ -14,13 +14,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.10
+      - name: Setup Python
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
+        
+      - name: Define variables 
+        run: |
+          $archiveName = "blrec-${{ github.ref }}-win64.zip"
+          $ffmpegArchive = "ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip"
+          $ffmpegArchiveUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/$ffmpegArchive"
+          $pythonVersion = "3.10.4"
+          $pythonArchive = "python-$pythonVersion-embed-amd64.zip"
+          $pythonArchiveUrl = "https://www.python.org/ftp/python/$pythonVersion/$pythonArchive"
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
+      - name: Download ffmpeg archive
+        run: Invoke-WebRequest -Uri $ffmpegArchiveUrl -OutFile $ffmpegArchive
+
+      - name: Download python archive
+        run: Invoke-WebRequest -Uri $pythonArchiveUrl -OutFile $pythonArchive
+
+      - name: Create build directory and dist directory
+        run: New-Item -Path @("build", "dist") -ItemType Directory -Force
+
+      - name: Enter build directory
+        run: Set-Location -Path "build"
+
+      - name: Unzip ffmpeg archive
+        run: Expand-Archive -LiteralPath "..\$ffmpegArchive" -DestinationPath "."
+
+      - name: Rename ffmpeg directory
+        run: Rename-Item -Path $ffmpegArchive.Substring(0, $ffmpegArchive.Length - 4) "ffmpeg"
+
+      - name: Sliming ffmpeg
+        run: Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
+
+      - name: Unzip Python archive
+        run: Expand-Archive -LiteralPath "..\$pythonArchive" -DestinationPath "python"
 
       - name: Create venv 
         run: python -m venv venv
@@ -28,8 +58,23 @@ jobs:
       - name: Activate venv 
         run: .\venv\Scripts\activate
       
-      - name: Install depenencies
+      - name: Install packages
         run: pip install ${{ github.workspace }}
 
-      - name: Test...
-        run: blrec --version
+      - name: Copy site-packages
+        run: robocopy venv\Lib\site-packages python\Lib\site-packages /mir /xd __pycache__* pip* setuptools*
+
+      - name: Add search path
+        run: Add-Content -Path "python\python310._pth" "Lib\site-packages"
+
+      - name: Copy run.bat
+        run: Copy-Item "${{ github.workspace }}\run.bat" -Destination ".\run.bat"
+
+      - name: Remove venv
+        run: Remove-Item -Path "venv" -Recurse -Force
+
+      - name: Exit build directory
+        run: Set-Location -Path ".."
+
+      - name: Zip files
+        run: Compress-Archive -Path "build\*" -DestinationPath "dist\$archiveName"
