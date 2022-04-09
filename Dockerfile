@@ -11,7 +11,7 @@ COPY setup.py setup.cfg ./
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ffmpeg build-essential python3-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    pip3 install -i https://mirrors.aliyun.com/pypi/simple --no-cache-dir -e . && \
+    pip3 install --no-cache-dir -e . && \
     apt-get purge -y --auto-remove build-essential python3-dev
 # ref: https://github.com/docker-library/python/issues/60#issuecomment-134322383
 
