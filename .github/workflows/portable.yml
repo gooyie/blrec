@@ -96,7 +96,7 @@ jobs:
       - name: Zip files
         run: |
           ls build
-          Get-ChildItem -Path "build" -Include @("run.bat", "python", "ffmpeg") | Compress-Archive -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
+          Compress-Archive -Path @("build\run.bat", "build\python", "build\ffmpeg") -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
           ls dist
 
       - name: Upload distributions to release
