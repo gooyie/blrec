@@ -31,10 +31,10 @@ jobs:
       - name: Download python archive
         run: Invoke-WebRequest -Uri $($env:PYTHON_ARCHIVE_URL) -OutFile python.zip
 
-      - name: Create build directory and dist directory
+      - name: Clean build directory and dist directory
         run: |
-         New-Item -Path @("build", "dist") -ItemType Directory
-         Clear-Item -Path @("build", "dist") -Force
+          Remove-Item -Path @("build", "dist") -Recurse -Force
+          New-Item -Path @("build", "dist") -ItemType Directory
 
       - name: Unzip ffmpeg archive
         run: Expand-Archive -LiteralPath "ffmpeg.zip" -DestinationPath "build"
@@ -97,3 +97,12 @@ jobs:
         run: |
           Compress-Archive -Path "build\*" -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
           ls dist
+
+      - name: Upload distributions to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist\*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
