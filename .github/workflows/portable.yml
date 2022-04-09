@@ -48,34 +48,45 @@ jobs:
 
       - name: Rename ffmpeg directory
         # run: Rename-Item -Path $($env:ffmpeg_archive).Substring(0, $($env:ffmpeg_archive).Length - 4) "ffmpeg"
+        working-directory: build 
         run: Rename-Item -Path ffmpeg-n5.0-latest-win64-lgpl-shared-5.0 "ffmpeg"
 
       - name: Sliming ffmpeg
+        working-directory: build 
         run: Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
 
       - name: Create venv 
+        working-directory: build 
         run: python -m venv venv
 
       - name: Activate venv 
+        working-directory: build 
         run: .\venv\Scripts\activate
       
       - name: Install packages
+        working-directory: build 
         run: pip install ${{ github.workspace }}
 
       - name: Copy site-packages
+        working-directory: build 
         run: robocopy venv\Lib\site-packages python\Lib\site-packages /mir /xd __pycache__* pip* setuptools*
 
       - name: Add search path
+        working-directory: build 
         run: Add-Content -Path "python\python310._pth" "Lib\site-packages"
 
       - name: Copy run.bat
+        working-directory: build 
         run: Copy-Item "${{ github.workspace }}\run.bat" -Destination ".\run.bat"
 
       - name: Remove venv
+        working-directory: build 
         run: Remove-Item -Path "venv" -Recurse -Force
 
       - name: Exit build directory
-        run: Set-Location -Path ".."
+        run: |
+          Set-Location -Path ".."
+          ls
 
       - name: Zip files
         run: Compress-Archive -Path "build\*" -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
