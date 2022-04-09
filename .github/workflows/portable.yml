@@ -62,14 +62,15 @@ jobs:
         working-directory: build
         run: python -m venv venv
 
-      - name: Activate venv
-        working-directory: build
-        run: .\venv\Scripts\activate
+      # - name: Activate venv
+      #   working-directory: build
+      #   run: .\venv\Scripts\activate
 
       - name: Install packages
         working-directory: build
         run: |
           ls ${{ github.workspace }}
+          .\venv\Scripts\activate
           pip install ${{ github.workspace }}
           ls venv\Lib\site-packages
 
