@@ -27,14 +27,16 @@ jobs:
         
       - name: Download ffmpeg archive
         # run: Invoke-WebRequest -Uri $($env:ffmpeg_archive_url) -OutFile ffmpeg.zip
-        run: $pwd
-        run: Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" -OutFile ffmpeg.zip
-        run: Test-Path -Path ffmpeg.zip
+        run: |
+          $pwd
+          Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" -OutFile ffmpeg.zip
+          Test-Path -Path ffmpeg.zip
 
       - name: Download python archive
         # run: Invoke-WebRequest -Uri $($env:python_archive_url) -OutFile python.zip
-        run: Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip" -OutFile python.zip
-        run: Test-Path -Path python.zip
+        run: |
+          Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip" -OutFile python.zip
+          Test-Path -Path python.zip
 
       - name: Create build directory and dist directory
         run: New-Item -Path @("build", "dist") -ItemType Directory
@@ -43,7 +45,10 @@ jobs:
         run: Set-Location -Path "build"
 
       - name: Unzip ffmpeg archive
-        run: Expand-Archive -LiteralPath "..\ffmpeg.zip" -DestinationPath "."
+        # run: Expand-Archive -LiteralPath "..\ffmpeg.zip" -DestinationPath "."
+        run: | 
+          $pwd
+          Expand-Archive -LiteralPath "..\ffmpeg.zip" -DestinationPath "."
 
       - name: Rename ffmpeg directory
         # run: Rename-Item -Path $($env:ffmpeg_archive).Substring(0, $($env:ffmpeg_archive).Length - 4) "ffmpeg"
