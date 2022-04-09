@@ -69,7 +69,7 @@ jobs:
       - name: Install packages
         working-directory: build
         run: |
-          ls
+          ls ${{ github.workspace }}
           pip install ${{ github.workspace }}
           ls venv\Lib\site-packages
 
