@@ -21,36 +21,38 @@ jobs:
         
       - name: Define variables 
         run: |
-          $archiveName = "blrec-${{ github.ref }}-win64.zip"
-          $ffmpegArchive = "ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip"
-          $ffmpegArchiveUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/$ffmpegArchive"
-          $pythonVersion = "3.10.4"
-          $pythonArchive = "python-$pythonVersion-embed-amd64.zip"
-          $pythonArchiveUrl = "https://www.python.org/ftp/python/$pythonVersion/$pythonArchive"
+          echo "action_state=yellow" >> $GITHUB_ENV
+
+          echo "archive_name=blrec-${{ github.ref }}-win64.zip" >> $GITHUB_ENV
+          echo "ffmpeg_archive=ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" >> $GITHUB_ENV
+          echo "ffmpeg_archive_url=https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${{ env.ffmpeg_archive }}" >> $GITHUB_ENV
+          echo "python_version=3.10.4" >> $GITHUB_ENV
+          echo "python_archive=python-${{ env.python_version }}-embed-amd64.zip" >> $GITHUB_ENV
+          echo "python_archive_url=https://www.python.org/ftp/python/${{ env.python_version }}/${{ env.python_archive }}" >> $GITHUB_ENV
 
       - name: Download ffmpeg archive
-        run: Invoke-WebRequest -Uri $ffmpegArchiveUrl -OutFile $ffmpegArchive
+        run: Invoke-WebRequest -Uri ${{ env.ffmpeg_archive_url }} -OutFile ${{ env.ffmpeg_archive }}
 
       - name: Download python archive
-        run: Invoke-WebRequest -Uri $pythonArchiveUrl -OutFile $pythonArchive
+        run: Invoke-WebRequest -Uri ${{ env.python_archive_url }} -OutFile ${{ env.python_archive }}
 
       - name: Create build directory and dist directory
-        run: New-Item -Path @("build", "dist") -ItemType Directory -Force
+        run: New-Item -Path @("build", "dist") -ItemType Directory
 
       - name: Enter build directory
         run: Set-Location -Path "build"
 
       - name: Unzip ffmpeg archive
-        run: Expand-Archive -LiteralPath "..\$ffmpegArchive" -DestinationPath "."
+        run: Expand-Archive -LiteralPath "..\${{ env.ffmpeg_archive }}" -DestinationPath "."
 
       - name: Rename ffmpeg directory
-        run: Rename-Item -Path $ffmpegArchive.Substring(0, $ffmpegArchive.Length - 4) "ffmpeg"
+        run: Rename-Item -Path ${{ env.ffmpeg_archive }}.Substring(0, ${{ env.ffmpeg_archive }}.Length - 4) "ffmpeg"
 
       - name: Sliming ffmpeg
         run: Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
 
       - name: Unzip Python archive
-        run: Expand-Archive -LiteralPath "..\$pythonArchive" -DestinationPath "python"
+        run: Expand-Archive -LiteralPath "..\${{ env.python_archive }}" -DestinationPath "python"
 
       - name: Create venv 
         run: python -m venv venv
@@ -77,4 +79,4 @@ jobs:
         run: Set-Location -Path ".."
 
       - name: Zip files
-        run: Compress-Archive -Path "build\*" -DestinationPath "dist\$archiveName"
+        run: Compress-Archive -Path "build\*" -DestinationPath "dist\${{ env.archive_name }}"
