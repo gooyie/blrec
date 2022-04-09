@@ -31,10 +31,11 @@ jobs:
       - name: Download python archive
         run: Invoke-WebRequest -Uri $($env:PYTHON_ARCHIVE_URL) -OutFile python.zip
 
-      - name: Clean build directory and dist directory
+      - name: Create build directory and dist directory
         run: |
-          Remove-Item -Path @("build", "dist") -Recurse -Force
           New-Item -Path @("build", "dist") -ItemType Directory
+          ls build 
+          ls dist
 
       - name: Unzip ffmpeg archive
         run: Expand-Archive -LiteralPath "ffmpeg.zip" -DestinationPath "build"
@@ -53,7 +54,9 @@ jobs:
 
       - name: Sliming ffmpeg
         working-directory: build
-        run: Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
+        run: |
+          Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
+          ls ffmpeg
 
       - name: Create venv
         working-directory: build
@@ -95,6 +98,7 @@ jobs:
 
       - name: Zip files
         run: |
+          ls build
           Compress-Archive -Path "build\*" -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
           ls dist
 
