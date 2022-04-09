@@ -9,7 +9,7 @@ env:
   dist_archive_name: blrec-${{ github.ref_name }}-win64.zip
   ffmpeg_archive_url: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
   ffmpeg_archive_name: ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
-  python_archive_url: https://www.python.org/ftp/python/3.10.4/python_version-embed-amd64.zip
+  python_archive_url: https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip
 
 jobs:
 
