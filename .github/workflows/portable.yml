@@ -21,8 +21,6 @@ jobs:
         
       - name: Define variables 
         run: |
-          echo "action_state=yellow" >> $GITHUB_ENV
-
           echo "archive_name=blrec-${{ github.ref }}-win64.zip" >> $GITHUB_ENV
           echo "ffmpeg_archive=ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" >> $GITHUB_ENV
           echo "ffmpeg_archive_url=https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${{ env.ffmpeg_archive }}" >> $GITHUB_ENV
