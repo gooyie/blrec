@@ -6,9 +6,9 @@ on:
       - v*.*.*
 
 env:
-  ffmpeg_archive_url: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
-  ffmpeg_archive_name: ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
-  python_archive_url: https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip
+  FFMPEG_ARCHIVE_URL: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
+  FFMPEG_ARCHIVE_NAME: ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
+  PYTHON_ARCHIVE_URL: https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip
 
 jobs:
 
@@ -26,14 +26,15 @@ jobs:
           python-version: "3.10"
 
       - name: Download ffmpeg archive
-        # run: Invoke-WebRequest -Uri $($env:ffmpeg_archive_url) -OutFile ffmpeg.zip
-        run: Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" -OutFile ffmpeg.zip
+        run: Invoke-WebRequest -Uri $($env:FFMPEG_ARCHIVE_URL) -OutFile ffmpeg.zip
 
       - name: Download python archive
-        run: Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip" -OutFile python.zip
+        run: Invoke-WebRequest -Uri $($env:PYTHON_ARCHIVE_URL) -OutFile python.zip
 
       - name: Create build directory and dist directory
-        run: New-Item -Path @("build", "dist") -ItemType Directory
+        run: |
+         New-Item -Path @("build", "dist") -ItemType Directory
+         Clear-Item -Path @("build", "dist") -ItemType Directory
 
       - name: Unzip ffmpeg archive
         run: Expand-Archive -LiteralPath "ffmpeg.zip" -DestinationPath "build"
@@ -47,9 +48,8 @@ jobs:
           ls
 
       - name: Rename ffmpeg directory
-        # run: Rename-Item -Path $($env:ffmpeg_archive).Substring(0, $($env:ffmpeg_archive).Length - 4) "ffmpeg"
         working-directory: build
-        run: Rename-Item -Path ffmpeg-n5.0-latest-win64-lgpl-shared-5.0 "ffmpeg"
+        run: Rename-Item -Path $($env:FFMPEG_ARCHIVE_NAME).Substring(0, $($env:FFMPEG_ARCHIVE_NAME).Length - 4) "ffmpeg"
 
       - name: Sliming ffmpeg
         working-directory: build
