@@ -83,10 +83,6 @@ jobs:
         working-directory: build
         run: Copy-Item "${{ github.workspace }}\run.bat" -Destination ".\run.bat"
 
-      - name: Remove venv
-        working-directory: build
-        run: Remove-Item -Path "venv" -Recurse
-
       - name: Exit build directory
         working-directory: build
         run: |
