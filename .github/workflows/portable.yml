@@ -68,7 +68,10 @@ jobs:
 
       - name: Install packages
         working-directory: build
-        run: pip install ${{ github.workspace }}
+        run: |
+          ls
+          pip install ${{ github.workspace }}
+          ls venv\Lib\site-packages
 
       - name: Copy site-packages
         shell: cmd
