@@ -6,7 +6,6 @@ on:
       - v*.*.*
 
 env:
-  dist_archive_name: blrec-${{ github.ref_name }}-win64.zip
   ffmpeg_archive_url: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
   ffmpeg_archive_name: ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip
   python_archive_url: https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip
@@ -27,10 +26,12 @@ jobs:
           python-version: "3.10"
         
       - name: Download ffmpeg archive
-        run: Invoke-WebRequest -Uri $($env:ffmpeg_archive_url) -OutFile ffmpeg.zip
+        # run: Invoke-WebRequest -Uri $($env:ffmpeg_archive_url) -OutFile ffmpeg.zip
+        run: Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-lgpl-shared-5.0.zip" -OutFile ffmpeg.zip
 
       - name: Download python archive
-        run: Invoke-WebRequest -Uri $($env:python_archive_url) -OutFile python.zip
+        # run: Invoke-WebRequest -Uri $($env:python_archive_url) -OutFile python.zip
+        run: Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.10.4/python-3.10.4-embed-amd64.zip" -OutFile python.zip
 
       - name: Create build directory and dist directory
         run: New-Item -Path @("build", "dist") -ItemType Directory
@@ -42,7 +43,8 @@ jobs:
         run: Expand-Archive -LiteralPath "..\ffmpeg.zip" -DestinationPath "."
 
       - name: Rename ffmpeg directory
-        run: Rename-Item -Path $($env:ffmpeg_archive).Substring(0, $($env:ffmpeg_archive).Length - 4) "ffmpeg"
+        # run: Rename-Item -Path $($env:ffmpeg_archive).Substring(0, $($env:ffmpeg_archive).Length - 4) "ffmpeg"
+        run: Rename-Item -Path ffmpeg-n5.0-latest-win64-lgpl-shared-5.0 "ffmpeg"
 
       - name: Sliming ffmpeg
         run: Get-ChildItem "ffmpeg" -Exclude @("LICENSE.txt", "bin") | Remove-Item -Recurse
@@ -75,4 +77,4 @@ jobs:
         run: Set-Location -Path ".."
 
       - name: Zip files
-        run: Compress-Archive -Path "build\*" -DestinationPath "dist\$($env:dist_archive_name)"
+        run: Compress-Archive -Path "build\*" -DestinationPath "dist\blrec-${{ github.ref_name }}-win64.zip"
